@@ -1,0 +1,66 @@
+services:
+  backend:
+    container_name: api-backend
+    build:
+      context: ./backend
+      dockerfile: dockerfiles/dev.dockerfile
+    ports:
+      - "7000:8000"
+    volumes:
+      - './backend:/home/app'
+    command: 
+      ["uvicorn", "main:app", "--host", "0.0.0.0", "--reload"]
+    networks:
+      - api-udp
+    env_file:
+      - ./backend/src/.env
+
+  redis:
+    container_name: api-redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - api-udp
+
+  postgres:
+    container_name: api-postgres
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: kazdream
+      POSTGRES_PASSWORD: kazdream
+      POSTGRES_DB: kazdream_logs
+    networks:
+      - api-udp
+    volumes:
+      - ./backend/pgdata:/var/lib/postgresql/data
+
+  mongo:
+    container_name: api-mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - api-udp
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kazdream
+      MONGO_INITDB_ROOT_PASSWORD: kazdream
+    volumes:
+      - ./backend/mongodata:/data/db
+
+  nginx:
+    image: nginx:latest
+    container_name: api-nginx
+    ports:
+      - "443:443"
+    networks:
+      - api-udp
+    volumes:
+      - "./backend/nginx/nginx.conf:/etc/nginx/nginx.conf"
+    restart: always
+
+networks:
+  api-udp:
+    driver: bridge

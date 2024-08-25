@@ -1,0 +1,14 @@
+fastapi
+redis
+pydantic-settings
+pydantic
+aiohttp
+uvicorn
+datetime
+beautifulsoup4
+slowapi
+motor
+alembic
+sqlalchemy
+psycopg2
+asyncpg
