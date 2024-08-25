@@ -1,22 +1,13 @@
 from fastapi import APIRouter, Query, HTTPException, Depends, Request
 from utils.parser import Parser
-import redis.asyncio as redis
 import json 
-from config import settings
 from .service import db
+from dependencies.redis import get_redis
 
 router = APIRouter(
     prefix="/sql",
     tags=["SQL"]
     )   
-
-async def get_redis():
-    redis_client = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, decode_responses=True)
-    try:
-        yield redis_client
-    finally:
-        await redis_client.close()
-
 
 @router.get('/lookup_whois')
 async def lookup_whois(request: Request, domain_name: str = Query(..., description="Domain name to look up in WHOIS"), redis=Depends(get_redis)):

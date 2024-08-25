@@ -2,6 +2,10 @@ import aiohttp
 from bs4 import BeautifulSoup
 from config import settings
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
+utc_plus_5 = ZoneInfo("Asia/Almaty")
+
 
 class Parser:
     def __init__(self, domain_name):
@@ -37,7 +41,7 @@ class Parser:
 
             data[key] = value
             
-        data['Дата парсинга'] = datetime.now().isoformat()
+        data['Дата парсинга'] = datetime.now(utc_plus_5).isoformat()
 
         return data
 
